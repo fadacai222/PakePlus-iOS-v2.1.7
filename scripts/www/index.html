@@ -1,88 +1,731 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="./static/css/styles.css" />
-        <meta
-            http-equiv="Content-Security-Policy"
-            content="default-src * 'unsafe-inline' 'unsafe-eval'"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Tauri App</title>
-        <script src="./static/js/main.js"></script>
-    </head>
-    <body>
-        <main class="container">
-            <h1>Welcome to TauriMan</h1>
+﻿<!doctype html>
+<html lang="zh-CN">
 
-            <div class="row">
-                <a
-                    href="https://tauri.app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <img
-                        src="./assets/tauri.svg"
-                        class="logo tauri"
-                        alt="Tauri logo"
-                    />
-                </a>
-                <a
-                    href="https://pakeplus.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <img
-                        src="https://hk.gh-proxy.org/https://github.com/Sjj1024/PakePlus/blob/main/app-icon.png"
-                        class="logo vanilla"
-                        alt="JavaScript logo"
-                    />
-                </a>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="theme-color" content="#FFF7ED" />
+  <title>D1 接码平台 - 商业版</title>
+  <style>
+    :root {
+      --bg: #fff7ed;
+      --panel: #ffffff;
+      --card: #ffffff;
+      --line: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #f97316;
+      --primary2: #ea580c;
+      --accent: #fb923c;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --ok: #16a34a;
+      --shadow: 0 10px 25px rgba(15, 23, 42, .08);
+      --radius: 16px;
+      --radius2: 12px;
+      --font: "Segoe UI Variable", "Bahnschrift", "Trebuchet MS", "Lucida Sans Unicode", sans-serif;
+      --mono: "Cascadia Mono", "Consolas", "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at -10% -10%, rgba(249, 115, 22, .18), transparent 55%),
+        radial-gradient(700px 500px at 110% 0%, rgba(251, 146, 60, .18), transparent 60%),
+        var(--bg);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+      min-height: 100vh;
+      padding: 14px 14px 88px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 247, 237, .85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 4px 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 8px 16px rgba(249, 115, 22, .25);
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: .3px;
+    }
+
+    .brand p {
+      margin: 3px 0 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      max-width: 42vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); }
+    .dot.ok { background: var(--ok); }
+    .dot.err { background: var(--danger); }
+
+    .balance {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+    }
+
+    .balance .amount { font-weight: 700; font-size: 15px; }
+
+    .section {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin: 0 0 8px 0;
+      font-size: 15px;
+      letter-spacing: .2px;
+    }
+
+    .card p { margin: 0 0 10px 0; font-size: 12px; color: var(--muted); }
+
+    label { display: block; margin: 10px 0 6px; font-size: 12px; color: var(--muted); }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: var(--radius2);
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+      font-family: var(--font);
+    }
+
+    textarea { min-height: 110px; resize: vertical; font-family: var(--mono); }
+
+    input.mono, textarea.mono { font-family: var(--mono); }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(249, 115, 22, .7);
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, .15);
+    }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .actions { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .btn {
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      color: var(--text);
+      padding: 12px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary2)); border: none; color: #fff; }
+    .btn.ghost { background: #fff7ed; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(249, 115, 22, .12);
+      color: var(--primary2);
+      font-size: 12px;
+      min-width: 72px;
+    }
+
+    .tabs {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      padding: 6px 8px 10px;
+    }
+
+    .tab {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 8px 6px;
+      border-radius: 12px;
+    }
+
+    .tab.active { background: #fff7ed; color: var(--primary2); font-weight: 600; }
+
+    @media (max-width: 720px) {
+      .row { grid-template-columns: 1fr; }
+      .actions { grid-template-columns: 1fr; }
+      .status { max-width: 55vw; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-title">
+          <div class="logo"></div>
+          <div>
+            <h1>D1 接码平台</h1>
+            <p>商业版 · 取号 / 接码 / 发短信</p>
+          </div>
+        </div>
+        <div class="status" title="状态">
+          <span id="dot" class="dot"></span>
+          <span id="statusText">就绪</span>
+        </div>
+      </div>
+      <div class="balance">
+        <div>余额 <span class="amount" id="balanceText">--</span></div>
+        <button class="btn" id="btnBalance">刷新余额</button>
+      </div>
+    </header>
+
+    <main class="section">
+      <section class="card" id="page-settings">
+        <h2>设置</h2>
+        <p>先保存 Token，必要时填写代理前缀解决浏览器跨域。</p>
+
+        <label>API Token</label>
+        <input id="setToken" class="mono" placeholder="token..." />
+
+        <div class="row">
+          <div>
+            <label>默认短信关键词</label>
+            <input id="setKeyword" placeholder="例如：毛竹" />
+          </div>
+          <div>
+            <label>默认省份</label>
+            <input id="setProvince" placeholder="例如：广东" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>默认卡类型</label>
+            <select id="setCardType">
+              <option value="全部">全部</option>
+              <option value="实卡">实卡</option>
+              <option value="虚卡">虚卡</option>
+            </select>
+          </div>
+          <div>
+            <label>轮询间隔（秒）</label>
+            <input id="setPoll" class="mono" placeholder="5" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>发短信默认收信号码</label>
+            <input id="setToPhone" class="mono" placeholder="目标手机号" />
+          </div>
+          <div>
+            <label>发短信默认项目ID（可空）</label>
+            <input id="setProjId" class="mono" placeholder="projId" />
+          </div>
+        </div>
+
+        <label>代理前缀（可空）</label>
+        <input id="setProxy" class="mono" placeholder="https://你的代理/forward?url=" />
+
+        <div class="actions">
+          <button class="btn primary" id="btnSave">保存设置</button>
+          <button class="btn" id="btnTest">测试余额</button>
+        </div>
+      </section>
+
+      <section class="card" id="page-get">
+        <h2>取号</h2>
+        <div class="row">
+          <div>
+            <label>短信关键词 keyWord（建议填）</label>
+            <input id="inKeyword" placeholder="例如：毛竹" />
+          </div>
+          <div>
+            <label>省份 province（可选）</label>
+            <input id="inProvince" placeholder="例如：广东" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>卡类型</label>
+            <select id="inCardType">
+              <option value="全部">全部</option>
+              <option value="实卡">实卡</option>
+              <option value="虚卡">虚卡</option>
+            </select>
+          </div>
+          <div>
+            <label>指定手机号 phone（可选）</label>
+            <input id="inPhone" class="mono" placeholder="130xxxxxxxx" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="btnGetPhone">取号</button>
+          <button class="btn" id="btnCopyPhone">复制当前号</button>
+        </div>
+
+        <label>当前手机号</label>
+        <input id="curPhone" class="mono" placeholder="取号后自动填充" />
+      </section>
+
+      <section class="card" id="page-msg">
+        <h2>接码</h2>
+        <div class="row">
+          <div>
+            <label>手机号 phone（必填）</label>
+            <input id="msgPhone" class="mono" placeholder="取号后自动填充" />
+          </div>
+          <div>
+            <label>短信关键词 keyWord（必填）</label>
+            <input id="msgKeyword" placeholder="例如：毛竹" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="btnGetMsg">查询一次</button>
+          <button class="btn" id="btnTogglePoll">开始轮询</button>
+        </div>
+
+        <label>短信内容</label>
+        <textarea id="msgText" class="mono" placeholder="收到的短信显示在这里"></textarea>
+
+        <div class="actions">
+          <button class="btn" id="btnCopyMsg">复制短信</button>
+          <button class="btn ghost" id="btnClearMsg">清空</button>
+        </div>
+      </section>
+
+      <section class="card" id="page-send">
+        <h2>发短信</h2>
+        <p>接口：code=send&phone=发信号&toPhone=收信号&content=内容&projId=可选</p>
+
+        <div class="row">
+          <div>
+            <label>发信手机号 phone（必填）</label>
+            <input id="sendPhone" class="mono" placeholder="默认当前手机号" />
+          </div>
+          <div>
+            <label>收信手机号 toPhone（必填）</label>
+            <input id="sendToPhone" class="mono" placeholder="目标手机号" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>项目ID projId（可空）</label>
+            <input id="sendProjId" class="mono" placeholder="projId" />
+          </div>
+          <div>
+            <label>快捷填充</label>
+            <div class="actions" style="margin-top:0">
+              <button class="btn" id="btnUseCurrent">使用当前号</button>
+              <button class="btn" id="btnUseDefaultTo">使用默认收信号</button>
             </div>
-            <p>Click to get data</p>
-            <form class="row" id="greet-form">
-                <input id="greet-input" placeholder="Enter a name..." />
-                <button type="submit" id="getdata">GET DATA</button>
-            </form>
-            <div class="functions">
-                <a href="./book.html" target="_self">跳转到book.html</a>
-                <a
-                    href="https://www.baidu.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >跳到百度blank
-                </a>
-                <a
-                    href="https://www.baidu.com"
-                    target="_self"
-                    rel="noopener noreferrer"
-                >
-                    跳到百度self
-                </a>
-                <button onclick="sayHello()">点击我</button>
-                <button onclick="sayHello()">下载文件</button>
-                <button onclick="sayHello()">上传文件</button>
-                <button onclick="sayHello()">访问相机</button>
-                <button onclick="sayHello()">访问麦克风</button>
-                <button onclick="sayHello()">访问相册</button>
-                <button class="btn" onclick="openWechat()">打开微信</button>
-                <button class="btn" onclick="openWechatScan()">
-                    打开扫一扫
-                </button>
-                <button class="btn" onclick="openZhihu()">打开知乎</button>
-                <button onclick="sayHello()">打开抖音</button>
-                <button onclick="sayHello()">用浏览器打开</button>
-                <button>打开知乎</button>
-            </div>
-            <p id="greet-msg"></p>
-            <img src="./static/image/cursor.jpeg" alt="logo" />
-            <video
-                src="https://hk.gh-proxy.org/https://github.com/Sjj1024/PakePlus/blob/main/docs/static/videos/pakeplus.mp4"
-                autoplay
-                controls
-                style="width: 100%; height: 100%"
-            ></video>
-            <audio src="./static/music/yin.mp3" controls></audio>
-        </main>
-    </body>
+          </div>
+        </div>
+
+        <label>短信内容 content（必填）</label>
+        <textarea id="sendContent" class="mono" placeholder="例如：您的验证码为 1234"></textarea>
+
+        <div class="actions">
+          <button class="btn primary" id="btnSend">发送短信</button>
+          <span class="pill" id="sendResp">等待发送</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="tabs">
+    <div class="tab active" data-to="settings">设置</div>
+    <div class="tab" data-to="get">取号</div>
+    <div class="tab" data-to="msg">接码</div>
+    <div class="tab" data-to="send">发短信</div>
+  </nav>
+
+  <script>
+    (() => {
+      const KEY = "d1_mobile_tool_cfg_v4_mobile";
+      const API_BASE = "http://api.d1jiema.com/zc/data.php";
+
+      const $ = (id) => document.getElementById(id);
+
+      const defaultCfg = {
+        token: "",
+        keyword: "",
+        province: "",
+        cardType: "全部",
+        poll: 5,
+        proxyPrefix: "",
+        lastPhone: "",
+        lastKw: "",
+        defaultToPhone: "",
+        defaultProjId: ""
+      };
+
+      function loadCfg() {
+        try {
+          const s = localStorage.getItem(KEY);
+          if (!s) return { ...defaultCfg };
+          return { ...defaultCfg, ...JSON.parse(s) };
+        } catch { return { ...defaultCfg }; }
+      }
+      function saveCfg(cfg) { localStorage.setItem(KEY, JSON.stringify(cfg)); }
+
+      let cfg = loadCfg();
+      let currentPhone = cfg.lastPhone || "";
+      let currentKw = cfg.lastKw || "";
+      let pollTimer = null;
+
+      function setStatus(text, type = "warn") {
+        $("statusText").textContent = text;
+        const dot = $("dot");
+        dot.className = "dot " + (type === "ok" ? "ok" : type === "err" ? "err" : "");
+      }
+
+      function toastCopy(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          setStatus("已复制", "ok");
+        }).catch(() => {
+          setStatus("复制失败", "err");
+          alert("复制失败：请检查浏览器权限或 HTTPS。");
+        });
+      }
+
+      function buildRealUrl(params) {
+        const usp = new URLSearchParams(params);
+        return API_BASE + "?" + usp.toString();
+      }
+
+      function buildRequestUrl(realUrl) {
+        const p = (cfg.proxyPrefix || "").trim();
+        if (!p) return realUrl;
+        return p + encodeURIComponent(realUrl);
+      }
+
+      async function apiCall(code, params) {
+        const token = (cfg.token || "").trim();
+        if (!token) throw new Error("未填写 Token，请先保存设置");
+        const realUrl = buildRealUrl({ code, token, ...params });
+        const reqUrl = buildRequestUrl(realUrl);
+        const r = await fetch(reqUrl, { method: "GET" });
+        const text = (await r.text()).trim();
+        if (!r.ok) throw new Error(`HTTP ${r.status}: ${text.slice(0, 200)}`);
+        if (text.startsWith("ERROR:")) throw new Error(text);
+        return text;
+      }
+
+      function syncCurrent() {
+        if (!$("curPhone").value.trim()) $("curPhone").value = currentPhone || "";
+        if (!$("msgPhone").value.trim() && currentPhone) $("msgPhone").value = currentPhone;
+        if (!$("sendPhone").value.trim() && currentPhone) $("sendPhone").value = currentPhone;
+        if (!$("msgKeyword").value.trim() && (currentKw || cfg.keyword)) $("msgKeyword").value = currentKw || cfg.keyword;
+      }
+
+      async function refreshBalance() {
+        $("btnBalance").disabled = true;
+        setStatus("查询余额中...", "warn");
+        try {
+          const v = await apiCall("leftAmount", {});
+          $("balanceText").textContent = v;
+          setStatus("余额已更新", "ok");
+        } catch (e) {
+          setStatus("余额查询失败", "err");
+          alert(e.message);
+        } finally {
+          $("btnBalance").disabled = false;
+        }
+      }
+
+      async function getPhone() {
+        const kw = $("inKeyword").value.trim();
+        const phone = $("inPhone").value.trim();
+        const province = $("inProvince").value.trim();
+        const cardType = $("inCardType").value.trim();
+
+        setStatus("取号中...", "warn");
+        try {
+          const params = {};
+          if (kw) params.keyWord = kw;
+          if (phone) params.phone = phone;
+          if (province) params.province = province;
+          if (cardType) params.cardType = cardType;
+
+          const p = (await apiCall("getPhone", params)).trim();
+          currentPhone = p;
+          currentKw = kw || currentKw || cfg.keyword || "";
+          cfg.lastPhone = currentPhone;
+          cfg.lastKw = currentKw;
+          saveCfg(cfg);
+
+          $("curPhone").value = currentPhone;
+          syncCurrent();
+          setStatus("取号成功", "ok");
+        } catch (e) {
+          setStatus("取号失败", "err");
+          alert(e.message);
+        }
+      }
+
+      async function getMsgOnce() {
+        const phone = $("msgPhone").value.trim();
+        const kw = $("msgKeyword").value.trim();
+        if (!phone) { alert("手机号必填"); return; }
+        if (!kw) { alert("关键词必填"); return; }
+
+        setStatus("查询短信中...", "warn");
+        try {
+          const text = await apiCall("getMsg", { phone, keyWord: kw });
+          $("msgText").value = text;
+          if (text.includes("[尚未收到]")) {
+            setStatus("尚未收到短信", "warn");
+          } else {
+            setStatus("已收到短信", "ok");
+          }
+        } catch (e) {
+          setStatus("查询失败", "err");
+          alert(e.message);
+        }
+      }
+
+      function startPoll() {
+        const phone = $("msgPhone").value.trim();
+        const kw = $("msgKeyword").value.trim();
+        let poll = parseInt(($("setPoll").value || cfg.poll || "5"), 10);
+        if (!poll || poll <= 0) poll = 5;
+
+        if (!phone) { alert("手机号必填"); return; }
+        if (!kw) { alert("关键词必填"); return; }
+
+        cfg.poll = poll;
+        saveCfg(cfg);
+
+        if (pollTimer) clearInterval(pollTimer);
+        $("btnTogglePoll").textContent = "停止轮询";
+        setStatus(`轮询中（每${poll}s）`, "warn");
+
+        const tick = () => apiCall("getMsg", { phone, keyWord: kw })
+          .then(text => {
+            $("msgText").value = text;
+            if (text.includes("[尚未收到]")) {
+              setStatus("轮询中：未收到", "warn");
+            } else {
+              setStatus("轮询中：已收到", "ok");
+            }
+          })
+          .catch(e => {
+            setStatus("轮询异常", "err");
+            console.error(e);
+          });
+
+        tick();
+        pollTimer = setInterval(tick, poll * 1000);
+      }
+
+      function stopPoll() {
+        if (pollTimer) {
+          clearInterval(pollTimer);
+          pollTimer = null;
+        }
+        $("btnTogglePoll").textContent = "开始轮询";
+        setStatus("已停止轮询", "warn");
+      }
+
+      async function sendSms() {
+        const phone = $("sendPhone").value.trim();
+        const toPhone = $("sendToPhone").value.trim();
+        const content = $("sendContent").value.trim();
+        const projId = $("sendProjId").value.trim();
+
+        if (!phone) { alert("发信手机号必填"); return; }
+        if (!toPhone) { alert("收信手机号必填"); return; }
+        if (!content) { alert("短信内容必填"); return; }
+
+        setStatus("发送中...", "warn");
+        $("sendResp").textContent = "发送中...";
+        try {
+          const params = { phone, toPhone, content };
+          if (projId) params.projId = projId;
+          const resp = await apiCall("send", params);
+          $("sendResp").textContent = resp || "发送完成";
+          setStatus("发送完成", "ok");
+        } catch (e) {
+          $("sendResp").textContent = "发送失败";
+          setStatus("发送失败", "err");
+          alert(e.message);
+        }
+      }
+
+      function fillSettings() {
+        $("setToken").value = cfg.token || "";
+        $("setKeyword").value = cfg.keyword || "";
+        $("setProvince").value = cfg.province || "";
+        $("setCardType").value = cfg.cardType || "全部";
+        $("setPoll").value = String(cfg.poll || 5);
+        $("setProxy").value = cfg.proxyPrefix || "";
+        $("setToPhone").value = cfg.defaultToPhone || "";
+        $("setProjId").value = cfg.defaultProjId || "";
+      }
+
+      function fillDefaults() {
+        $("inKeyword").value = cfg.keyword || "";
+        $("inProvince").value = cfg.province || "";
+        $("inCardType").value = cfg.cardType || "全部";
+        $("sendToPhone").value = cfg.defaultToPhone || "";
+        $("sendProjId").value = cfg.defaultProjId || "";
+
+        if (!currentKw) currentKw = cfg.keyword || "";
+        syncCurrent();
+      }
+
+      function saveSettings() {
+        cfg.token = $("setToken").value.trim();
+        cfg.keyword = $("setKeyword").value.trim();
+        cfg.province = $("setProvince").value.trim();
+        cfg.cardType = $("setCardType").value.trim() || "全部";
+        let poll = parseInt($("setPoll").value.trim(), 10);
+        if (!poll || poll <= 0) poll = 5;
+        cfg.poll = poll;
+        cfg.proxyPrefix = $("setProxy").value.trim();
+        cfg.defaultToPhone = $("setToPhone").value.trim();
+        cfg.defaultProjId = $("setProjId").value.trim();
+
+        saveCfg(cfg);
+        fillDefaults();
+        setStatus("设置已保存", "ok");
+        alert("已保存（浏览器本地持久化）");
+      }
+
+      // nav
+      const pages = {
+        settings: $("page-settings"),
+        get: $("page-get"),
+        msg: $("page-msg"),
+        send: $("page-send")
+      };
+      function showPage(name) {
+        Object.entries(pages).forEach(([k, el]) => {
+          el.style.display = (k === name ? "block" : "none");
+        });
+        document.querySelectorAll(".tabs .tab").forEach(t => {
+          t.classList.toggle("active", t.dataset.to === name);
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      document.querySelectorAll(".tabs .tab").forEach(t => {
+        t.addEventListener("click", () => showPage(t.dataset.to));
+      });
+
+      // binds
+      $("btnBalance").addEventListener("click", refreshBalance);
+      $("btnGetPhone").addEventListener("click", getPhone);
+      $("btnCopyPhone").addEventListener("click", () => {
+        const p = $("curPhone").value.trim() || currentPhone || "";
+        if (!p) { alert("没有当前手机号"); return; }
+        toastCopy(p);
+      });
+
+      $("btnGetMsg").addEventListener("click", getMsgOnce);
+      $("btnTogglePoll").addEventListener("click", () => pollTimer ? stopPoll() : startPoll());
+
+      $("btnCopyMsg").addEventListener("click", () => {
+        const t = $("msgText").value.trim();
+        if (!t) { alert("短信内容为空"); return; }
+        toastCopy(t);
+      });
+      $("btnClearMsg").addEventListener("click", () => $("msgText").value = "");
+
+      $("btnUseCurrent").addEventListener("click", () => {
+        if (currentPhone) $("sendPhone").value = currentPhone;
+      });
+      $("btnUseDefaultTo").addEventListener("click", () => {
+        if (cfg.defaultToPhone) $("sendToPhone").value = cfg.defaultToPhone;
+      });
+
+      $("btnSend").addEventListener("click", sendSms);
+      $("btnSave").addEventListener("click", saveSettings);
+      $("btnTest").addEventListener("click", refreshBalance);
+
+      // boot
+      fillSettings();
+      fillDefaults();
+      $("balanceText").textContent = "--";
+      setStatus("就绪", "warn");
+      showPage("get");
+    })();
+  </script>
+</body>
+
 </html>
